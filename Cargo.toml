@@ -1,5 +1,5 @@
 [package]
-name = "jsonrpc-v1"
+name = "exonum-jsonrpc-v1"
 version	= "0.2.0"
 authors	= ["Andrew Poelstra <apoelstra@wpsoftware.net>", 
            "Jean Pierre De Jesus Dudey Diaz <jeandudey@hotmail.com>",
