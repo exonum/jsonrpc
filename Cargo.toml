@@ -1,19 +1,13 @@
 [package]
-name = "exonum-jsonrpc-v1"
+name = "exonum_jsonrpc"
 version	= "0.2.0"
-authors	= ["Andrew Poelstra <apoelstra@wpsoftware.net>", 
+authors	= ["Andrew Poelstra <apoelstra@wpsoftware.net>",
            "Jean Pierre De Jesus Dudey Diaz <jeandudey@hotmail.com>",
-           "Aleksey Sidorov <aleksei.sidorov@xdev.re>"]
+           "The Exonum Team <exonum@bitfury.com>"]
 license	= "CC0-1.0"
-homepage = "https://github.com/exonum/jsonrpc-v1"
-repository = "https://github.com/exonum/jsonrpc-v1"
+repository = "https://github.com/exonum/jsonrpc"
 description	= "Rust support for the JSON-RPC 1.0 protocol"
-keywords = [ "protocol", "json", "http", "jsonrpc" ]
 readme	= "README.md"
-
-[lib]
-name = "jsonrpc_v1"
-path = "src/lib.rs"
 
 [dependencies]
 serde = "1.0"

@@ -1,4 +1,4 @@
-extern crate jsonrpc_v1;
+extern crate exonum_jsonrpc;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde;
@@ -6,7 +6,7 @@ extern crate serde_json;
 
 use std::env;
 
-use jsonrpc_v1::client::Client as RpcClient;
+use exonum_jsonrpc::client::Client as RpcClient;
 
 #[derive(Deserialize, Debug)]
 struct MiningInfo {

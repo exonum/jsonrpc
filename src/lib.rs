@@ -26,7 +26,6 @@
 #![crate_type = "lib"]
 #![crate_type = "rlib"]
 #![crate_type = "dylib"]
-#![crate_name = "jsonrpc_v1"]
 
 // Coding conventions
 #![deny(missing_docs,
