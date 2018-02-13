@@ -24,17 +24,10 @@
 //! and parsing responses
 //!
 
-use std::io;
-use std::io::Read;
 use std::sync::{Arc, Mutex};
 
-use hyper::client::Client as HyperClient;
-use hyper::header::{Headers, Authorization, Basic};
-use hyper;
-
+use reqwest;
 use serde_json::Value;
-use serde_json::ser;
-use serde_json::de;
 
 use super::{Request, Response};
 use error::Error;
@@ -44,7 +37,7 @@ pub struct Client {
     url: String,
     user: Option<String>,
     pass: Option<String>,
-    client: HyperClient,
+    client: reqwest::Client,
     nonce: Arc<Mutex<u64>>,
 }
 
@@ -53,7 +46,7 @@ impl Client {
     ///
     /// # Examples
     /// ```
-    /// use jsonrpc_v1::client::Client;
+    /// use exonum_jsonrpc::client::Client;
     ///
     /// let client = Client::new(String::from("www.example.org"), None, None);
     /// ```
@@ -71,57 +64,21 @@ impl Client {
             url: url,
             user: user,
             pass: pass,
-            client: HyperClient::new(),
+            client: reqwest::Client::new(),
             nonce: Arc::new(Mutex::new(0)),
         }
     }
 
     /// Sends a request to a client
     pub fn send_request(&self, request: &Request) -> Result<Response, Error> {
-        // Build request
-        let request_raw = ser::to_vec(request)?;
-
-        // Setup connection
-        let mut headers = Headers::new();
-        if let Some(ref user) = self.user {
-            headers.set(Authorization(Basic {
-                username: user.clone(),
-                password: self.pass.clone(),
-            }));
-        }
-
         // Send request
-        let retry_headers = headers.clone();
-        let hyper_request = self.client.post(&self.url).headers(headers).body(&request_raw[..]);
-        let mut stream = match hyper_request.send() {
-            Ok(s) => s,
-            // Hyper maintains a pool of TCP connections to its various clients,
-            // and when one drops it cannot tell until it tries sending. In this
-            // case the appropriate thing is to re-send, which will cause hyper
-            // to open a new connection. Jonathan Reem explained this to me on
-            // IRC, citing vague technical reasons that the library itself cannot
-            // do the retry transparently.
-            Err(hyper::error::Error::Io(e)) => {
-                if e.kind() == io::ErrorKind::ConnectionAborted {
-                    self.client
-                        .post(&self.url)
-                        .headers(retry_headers)
-                        .body(&request_raw[..])
-                        .send()
-                        .map_err(Error::Hyper)?
-                } else {
-                    return Err(Error::Hyper(hyper::error::Error::Io(e)));
-                }
-            }
-            Err(e) => {
-                return Err(Error::Hyper(e));
-            }
-        };
-
-        // nb we ignore stream.status since we expect the body
-        // to contain information about any error
-        let response: Response = de::from_reader(&mut stream)?;
-        stream.bytes().count(); // Drain the stream so it can be reused
+        let mut request_builder = self.client.post(&self.url);
+        if let Some(ref user) = self.user {
+            request_builder.basic_auth(user.clone(), self.pass.clone());
+        }
+        let mut reqwest_response = request_builder.json(request).send()?;
+        // Parse response
+        let response: Response = reqwest_response.json()?;
         if response.id != request.id {
             return Err(Error::NonceMismatch);
         }

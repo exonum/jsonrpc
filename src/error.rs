@@ -25,7 +25,7 @@
 
 use std::{error, fmt};
 
-use hyper;
+use reqwest;
 use serde_json;
 use serde_json::Value;
 
@@ -35,7 +35,7 @@ pub enum Error {
     /// Json error
     Json(serde_json::Error),
     /// Client error
-    Hyper(hyper::error::Error),
+    Client(reqwest::Error),
     /// Rpc error,
     Rpc(Value),
     /// Response has neither error nor result
@@ -50,9 +50,9 @@ impl From<serde_json::Error> for Error {
     }
 }
 
-impl From<hyper::error::Error> for Error {
-    fn from(e: hyper::error::Error) -> Error {
-        Error::Hyper(e)
+impl From<reqwest::Error> for Error {
+    fn from(e: reqwest::Error) -> Error {
+        Error::Client(e)
     }
 }
 
@@ -60,7 +60,7 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Error::Json(ref e) => write!(f, "JSON decode error: {}", e),
-            Error::Hyper(ref e) => write!(f, "Hyper error: {}", e),
+            Error::Client(ref e) => write!(f, "Client error: {}", e),
             _ => f.write_str(error::Error::description(self)),
         }
     }
@@ -70,7 +70,7 @@ impl error::Error for Error {
     fn description(&self) -> &str {
         match *self {
             Error::Json(_) => "JSON decode error",
-            Error::Hyper(_) => "Hyper error",
+            Error::Client(_) => "Client error",
             Error::Rpc(_) => "Rpc error",
             Error::NoErrorOrResult => "Malformed RPC response",
             Error::NonceMismatch => "Nonce of response did not match nonce of request",
@@ -80,7 +80,7 @@ impl error::Error for Error {
     fn cause(&self) -> Option<&error::Error> {
         match *self {
             Error::Json(ref e) => Some(e),
-            Error::Hyper(ref e) => Some(e),
+            Error::Client(ref e) => Some(e),
             _ => None,
         }
     }

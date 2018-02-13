@@ -36,7 +36,7 @@
 #![deny(non_snake_case)]
 #![deny(unused_mut)]
 
-extern crate hyper;
+extern crate reqwest;
 
 #[macro_use]
 extern crate serde_derive;
@@ -80,7 +80,8 @@ pub struct Response {
 impl Response {
     /// Extract the result from a response
     pub fn result<T>(&self) -> Result<T, Error>
-        where for<'de> T: serde::Deserialize<'de>
+    where
+        for<'de> T: serde::Deserialize<'de>,
     {
         if let Some(ref e) = self.error {
             return Err(Error::Rpc(e.clone()));
@@ -93,7 +94,8 @@ impl Response {
 
     /// Extract the result from a response, consuming the response
     pub fn into_result<T>(self) -> Result<T, Error>
-        where for<'de> T: serde::Deserialize<'de>
+    where
+        for<'de> T: serde::Deserialize<'de>,
     {
         if let Some(e) = self.error {
             return Err(Error::Rpc(e));
@@ -130,7 +132,10 @@ mod tests {
     fn request_serialize_round_trip() {
         let original = Request {
             method: "test".to_owned(),
-            params: json!([(), false, true, "test2"]).as_array().cloned().unwrap(),
+            params: json!([(), false, true, "test2"])
+                .as_array()
+                .cloned()
+                .unwrap(),
             id: json!("69"),
         };
 

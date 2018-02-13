@@ -11,6 +11,7 @@ example code
 
 ```rust
 #[macro_use] extern crate jsonrpc;
+#[macro_use] extern crate serde_derive;
 extern crate serde;
 
 #[derive(Serialize, Deserialize)]

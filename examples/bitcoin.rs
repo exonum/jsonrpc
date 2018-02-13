@@ -28,16 +28,20 @@ fn main() {
     let user = args.next();
     let passwd = args.next();
 
-    println!("Send request to: {:?} user={:?}, passwd={:?}",
-             url,
-             user,
-             passwd);
+    println!(
+        "Send request to: {:?} user={:?}, passwd={:?}",
+        url,
+        user,
+        passwd
+    );
     let client = RpcClient::new(url, user, passwd);
 
     let method_name = String::from("getmininginfo");
     let request = client.build_request(method_name, vec![]);
 
-    match client.send_request(&request).and_then(|res| res.into_result::<MiningInfo>()) {
+    match client.send_request(&request).and_then(|res| {
+        res.into_result::<MiningInfo>()
+    }) {
         Ok(mining_info) => {
             println!("mining_info: {:?}", mining_info);
             return;
