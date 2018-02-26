@@ -30,13 +30,13 @@ use serde_json;
 #[derive(Debug, Fail, Display)]
 pub enum Error {
     /// Json decoding error.
-    #[display(fmt = "A json decoding error occurred: {}", _0)]
+    #[display(fmt = "Json decoding error. {}", _0)]
     Json(serde_json::Error),
     /// Client error
-    #[display(fmt = "An error in client occurred: {}", _0)]
+    #[display(fmt = "Client error. {}", _0)]
     Client(reqwest::Error),
     /// Rpc error,
-    #[display(fmt = "An rpc error occurred: {}", _0)]
+    #[display(fmt = "Rpc error. {}", _0)]
     Rpc(serde_json::Value),
     /// Response has neither error nor result.
     #[display(fmt = "Response has neither error nor result")]
