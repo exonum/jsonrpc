@@ -23,24 +23,26 @@
 //! Some useful methods for creating Error objects
 //!
 
-use std::{error, fmt};
-
 use reqwest;
 use serde_json;
-use serde_json::Value;
 
 /// A library error
-#[derive(Debug)]
+#[derive(Debug, Fail, Display)]
 pub enum Error {
-    /// Json error
+    /// Json decoding error.
+    #[display(fmt = "A json decoding error occurred: {}", _0)]
     Json(serde_json::Error),
     /// Client error
+    #[display(fmt = "An error in client occurred: {}", _0)]
     Client(reqwest::Error),
     /// Rpc error,
-    Rpc(Value),
-    /// Response has neither error nor result
+    #[display(fmt = "An rpc error occurred: {}", _0)]
+    Rpc(serde_json::Value),
+    /// Response has neither error nor result.
+    #[display(fmt = "Response has neither error nor result")]
     NoErrorOrResult,
     /// Response to a request did not have the expected nonce
+    #[display(fmt = "Response to a request did not have the expected nonce")]
     NonceMismatch,
 }
 
@@ -53,35 +55,5 @@ impl From<serde_json::Error> for Error {
 impl From<reqwest::Error> for Error {
     fn from(e: reqwest::Error) -> Error {
         Error::Client(e)
-    }
-}
-
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            Error::Json(ref e) => write!(f, "JSON decode error: {}", e),
-            Error::Client(ref e) => write!(f, "Client error: {}", e),
-            _ => f.write_str(error::Error::description(self)),
-        }
-    }
-}
-
-impl error::Error for Error {
-    fn description(&self) -> &str {
-        match *self {
-            Error::Json(_) => "JSON decode error",
-            Error::Client(_) => "Client error",
-            Error::Rpc(_) => "Rpc error",
-            Error::NoErrorOrResult => "Malformed RPC response",
-            Error::NonceMismatch => "Nonce of response did not match nonce of request",
-        }
-    }
-
-    fn cause(&self) -> Option<&error::Error> {
-        match *self {
-            Error::Json(ref e) => Some(e),
-            Error::Client(ref e) => Some(e),
-            _ => None,
-        }
     }
 }

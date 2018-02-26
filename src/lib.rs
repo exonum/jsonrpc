@@ -43,6 +43,11 @@ extern crate serde_derive;
 extern crate serde;
 #[macro_use]
 extern crate serde_json;
+extern crate failure;
+#[macro_use] 
+extern crate failure_derive;
+#[macro_use] 
+extern crate display_derive;
 
 pub mod client;
 pub mod error;
