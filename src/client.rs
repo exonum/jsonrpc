@@ -74,7 +74,7 @@ impl Client {
         // Send request
         let mut request_builder = self.client.post(&self.url);
         if let Some(ref user) = self.user {
-            request_builder.basic_auth(user.clone(), self.pass.clone());
+            request_builder = request_builder.basic_auth(user.clone(), self.pass.clone());
         }
         let mut reqwest_response = request_builder.json(request).send()?;
         // Parse response
