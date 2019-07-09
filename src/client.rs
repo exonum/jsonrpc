@@ -61,9 +61,9 @@ impl Client {
         debug_assert!(pass.is_none() || user.is_some());
 
         Client {
-            url: url,
-            user: user,
-            pass: pass,
+            url,
+            user,
+            pass,
             client: reqwest::Client::new(),
             nonce: Arc::new(Mutex::new(0)),
         }
@@ -91,7 +91,7 @@ impl Client {
         *nonce += 1;
         Request {
             method: name,
-            params: params,
+            params,
             id: json!(*nonce),
         }
     }

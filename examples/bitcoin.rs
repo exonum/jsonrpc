@@ -24,7 +24,7 @@ struct MiningInfo {
 
 fn main() {
     let mut args = env::args();
-    let url = args.nth(1).unwrap_or("http://localhost:18332".into());
+    let url = args.nth(1).unwrap_or_else(|| "http://localhost:18332".into());
     let user = args.next();
     let passwd = args.next();
 

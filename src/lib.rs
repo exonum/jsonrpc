@@ -23,10 +23,6 @@
 //! Rust support for the JSON-RPC 1.0 protocol.
 //!
 
-#![crate_type = "lib"]
-#![crate_type = "rlib"]
-#![crate_type = "dylib"]
-
 // Coding conventions
 #![deny(missing_docs,
         trivial_casts, trivial_numeric_casts,
@@ -46,8 +42,6 @@ extern crate serde_json;
 extern crate failure;
 #[macro_use] 
 extern crate failure_derive;
-#[macro_use] 
-extern crate display_derive;
 
 pub mod client;
 pub mod error;

@@ -27,22 +27,22 @@ use reqwest;
 use serde_json;
 
 /// A library error
-#[derive(Debug, Fail, Display)]
+#[derive(Debug, Fail)]
 pub enum Error {
     /// Json decoding error.
-    #[display(fmt = "Json decoding error. {}", _0)]
+    #[fail(display = "Json decoding error. {}", _0)]
     Json(serde_json::Error),
     /// Client error
-    #[display(fmt = "Client error. {}", _0)]
+    #[fail(display = "Client error. {}", _0)]
     Client(reqwest::Error),
     /// Rpc error,
-    #[display(fmt = "Rpc error. {}", _0)]
+    #[fail(display = "Rpc error. {}", _0)]
     Rpc(serde_json::Value),
     /// Response has neither error nor result.
-    #[display(fmt = "Response has neither error nor result")]
+    #[fail(display = "Response has neither error nor result")]
     NoErrorOrResult,
     /// Response to a request did not have the expected nonce
-    #[display(fmt = "Response to a request did not have the expected nonce")]
+    #[fail(display = "Response to a request did not have the expected nonce")]
     NonceMismatch,
 }
 
